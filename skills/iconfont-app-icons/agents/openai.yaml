@@ -1,0 +1,4 @@
+interface:
+  display_name: "Iconfont App Icons"
+  short_description: "Search, add, and integrate iconfont icons automatically"
+  default_prompt: "Use $iconfont-app-icons to find matching icons, add them to my iconfont project, and integrate them into this app."
