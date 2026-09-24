@@ -16,7 +16,8 @@ A Codex Skill that finds style-matched icons on [iconfont.cn](https://www.iconfo
 ## Install
 
 ```bash
-npx skills add gzgogo/iconfont-app-icons-skill@iconfont-app-icons -g -y
+npx skills add gzgogo/iconfont-app-icons-skill \
+  --skill iconfont-app-icons -g -y
 ```
 
 Restart Codex or open a new task if an already-running task does not discover the newly installed Skill.
