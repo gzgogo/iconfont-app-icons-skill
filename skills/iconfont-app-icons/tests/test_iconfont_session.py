@@ -6,6 +6,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import Mock
 
 
 MODULE_PATH = Path(__file__).parents[1] / "scripts" / "iconfont_session.py"
@@ -153,6 +154,35 @@ class ApiShapeTests(unittest.TestCase):
         self.assertEqual(endpoints["add_icons"]["url"], "/api/project/addIcons.json")
         self.assertEqual(endpoints["add_icons"]["method"], "POST")
         self.assertEqual(endpoints["project_lists"]["method"], "GET")
+
+    def test_project_icons_uses_json_project_detail(self):
+        client = object.__new__(iconfont_session.IconfontClient)
+        client.project_detail = Mock(return_value={"icons": [{"id": 11}]})
+
+        self.assertEqual(client.project_icons("12345"), [{"id": 11}])
+        client.project_detail.assert_called_once_with("12345")
+        self.assertNotIn("project_symbols", iconfont_session.FALLBACK_ENDPOINTS)
+
+    def test_add_icons_deduplicates_and_verifies_with_project_detail(self):
+        client = object.__new__(iconfont_session.IconfontClient)
+        client.cookies = []
+        client.project_detail = Mock(
+            side_effect=[
+                {"icons": [{"id": 11}]},
+                {"icons": [{"id": 11}, {"id": 22}]},
+            ]
+        )
+        client._request = Mock(return_value={})
+
+        result = client.add_icons(
+            "12345", [{"id": "11", "project_id": "-1"}, {"id": "22", "project_id": "-1"}]
+        )
+
+        self.assertEqual(result, {"added": ["22"], "already_present": ["11"]})
+        self.assertEqual(client.project_detail.call_count, 2)
+        endpoint, payload = client._request.call_args.args
+        self.assertEqual(endpoint, iconfont_session.FALLBACK_ENDPOINTS["add_icons"])
+        self.assertEqual(payload["ids"], "22|-1")
 
 
 if __name__ == "__main__":

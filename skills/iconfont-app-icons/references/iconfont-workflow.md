@@ -55,7 +55,7 @@ python3 scripts/iconfont_session.py add PROJECT_ID ICON_ID\|SOURCE_PROJECT_ID
 python3 scripts/iconfont_session.py refresh-code PROJECT_ID
 ```
 
-`add` checks existing project icons, adds only missing IDs, and reads the project back to verify the write. Public search results normally use source project `-1`. If authenticated browser traffic shows a different source project ID, preserve it as `ICON_ID|SOURCE_PROJECT_ID`.
+`add` reads the `icons` array from project detail, adds only missing IDs, and reads it back to verify the write. Do not use `/api/project/symbols.json` for this check: it currently returns HTML with HTTP 200. Public search results normally use source project `-1`. If authenticated browser traffic shows a different source project ID, preserve it as `ICON_ID|SOURCE_PROJECT_ID`.
 
 Current known API shapes were discovered from iconfont's own frontend bundle on 2026-09-23:
 

@@ -38,7 +38,6 @@ FALLBACK_ENDPOINTS: Dict[str, Dict[str, str]] = {
     "add_icons": {"url": "/api/project/addIcons.json", "method": "POST"},
     "project_lists": {"url": "/api/user/myprojects.json", "method": "GET"},
     "project_detail": {"url": "/api/project/detail.json", "method": "GET"},
-    "project_symbols": {"url": "/api/project/symbols.json", "method": "GET"},
     "search_icons": {"url": "/api/icon/search.json", "method": "POST"},
     "refresh_code": {"url": "/api/project/cdn.json", "method": "POST"},
 }
@@ -384,11 +383,8 @@ class IconfontClient:
     def project_detail(self, project_id: str) -> Dict[str, Any]:
         return self._request(FALLBACK_ENDPOINTS["project_detail"], {"pid": project_id}) or {}
 
-    def project_icons(self, project_id: str, page_size: int = 500) -> List[Dict[str, Any]]:
-        data = self._request(
-            FALLBACK_ENDPOINTS["project_symbols"],
-            {"id": project_id, "page": 1, "pageSize": page_size},
-        ) or {}
+    def project_icons(self, project_id: str) -> List[Dict[str, Any]]:
+        data = self.project_detail(project_id)
         return list(data.get("icons") or [])
 
     def add_icons(self, project_id: str, icons: List[Dict[str, str]]) -> Dict[str, Any]:
